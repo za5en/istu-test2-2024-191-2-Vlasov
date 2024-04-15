@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="test.Cow">
+    <Position X="5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAICQAAAAAAGoAAAAAAACCAABAAAAAAAQAAABAEg=</HashCode>
+      <FileName>Cow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Worker">
+    <Position X="3.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>goAQAEAAAAIAAAQCAAAAAAACKAAQAAgBAAAACAgAAAA=</HashCode>
+      <FileName>Worker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Foreman">
+    <Position X="6.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAwAAAhAAIAAAAAAAAAAEAACBKQACAAAIAACAAQAAA=</HashCode>
+      <FileName>Foreman.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Vet">
+    <Position X="8.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAIQAAAAAIMAAAAAACAAAAAACAAQAAABAAAACAAAAAA=</HashCode>
+      <FileName>Vet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Building">
+    <Position X="10.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEEAAAAQAAAABAABAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Building.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Schedule">
+    <Position X="3.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIIACAAgAAAgAAAAAAABAAAgAAAAQCAAAAABAAA=</HashCode>
+      <FileName>Schedule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Equipment">
+    <Position X="5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAgAAAAAABAABAAAAAAAAAAAEAAE=</HashCode>
+      <FileName>Equipment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Food">
+    <Position X="6.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACACAAQABAAACAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Food.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Water">
+    <Position X="8.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAQAAAAACAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Water.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Product">
+    <Position X="10.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAQAAAAAAAQABAEAAAAAAAAAAABA=</HashCode>
+      <FileName>Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="test.Stats">
+    <Position X="12" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Stats.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
