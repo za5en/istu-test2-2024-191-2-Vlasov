@@ -1,6 +1,6 @@
 namespace TestProject1;
 
-public class Tests
+public class CowInit
 {
     [SetUp]
     public void Setup()
