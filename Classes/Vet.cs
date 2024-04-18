@@ -56,7 +56,7 @@ public class Vet
         return cow.Health == CowHealth.Healthy;
     }
 
-    public bool Heal(Cow cow)
+    public bool Heal(Cow cow, bool fail = false)
     {
         Activity = ActivityType.Treatment;
         switch (cow.Health)
@@ -64,21 +64,24 @@ public class Vet
             case CowHealth.Sick:
             {
                 cow.Location = CowLocation.CowFlipper;
-                var rand = new Random();
-                var a = rand.Next(2);
-                if (a == 1)
+                if (!fail)
                 {
-                    cow.Health = CowHealth.Healthy;
-                    cow.Location = CowLocation.Stall;
-                    return true;
-                }
-                else
-                {
+                    var rand = new Random();
+                    var a = rand.Next(2);
+                    if (a == 1)
+                    {
+                        cow.Health = CowHealth.Healthy;
+                        cow.Location = CowLocation.Stall;
+                        return true;
+                    }
                     cow.Location = CowLocation.Stall;
                     Foreman.Schedule.Disruptions = true;
                     Foreman.AcceptWork(false);
                     return false;
                 }
+                cow.Location = CowLocation.Stall;
+                Foreman.Schedule.Disruptions = true;
+                return false;
             }
             case CowHealth.Dead:
                 Foreman.Schedule.Disruptions = true;

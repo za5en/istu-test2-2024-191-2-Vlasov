@@ -95,6 +95,7 @@ public class Worker
     public bool UseEq(Equipment eq)
     {
         eq.IsUsing = true;
+        eq.IsClean = false;
         eq.UsageTime += 100;
         return eq.IsUsing;
     }
