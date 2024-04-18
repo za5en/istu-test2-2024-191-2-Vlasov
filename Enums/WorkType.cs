@@ -5,6 +5,6 @@ public enum WorkType
     Feeding,
     Watering,
     Milking,
-    Clearing,
+    Cleaning,
     Fixing
 }

@@ -22,6 +22,16 @@ public class Foreman
         IsChecking = isChecking;
     }
 
+    public Foreman()
+    {
+        Schedule = new Schedule();
+        IsWorking = true;
+        IsWorkingDay = true;
+        IsHealthy = true;
+        CheckType = CheckType.Schedule;
+        IsChecking = false;
+    }
+
     public bool WorkCondChange()
     {
         IsWorking = !IsWorking;
@@ -99,19 +109,20 @@ public class Foreman
         return true;
     }
     
-    public bool BuyEq(EqType type)
+    public Equipment BuyEq(EqType type)
     {
         var eq = new Equipment(type: type, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 0, isClean: true);
         Eqs.Add(eq);
-        return !IsWorking;
+        return eq;
     }
     
-    public bool DeleteEq(Equipment eq)
+    public List<Equipment> DeleteEq(Equipment eq, List<Equipment> eqs)
     {
         var type = eq.Type;
         foreach (var equip in Eqs.Where(equip => eq.Type == equip.Type).ToList())
         {
             Eqs.Remove(equip);
+            eqs.Remove(eq);
             eq.IsBroken = false;
             eq.IsClean = true;
             eq.IsUsing = false;
@@ -120,13 +131,18 @@ public class Foreman
         }
         Schedule.Disruptions = true;
 
-        BuyEq(type);
-        return false;
+        var newEq = BuyEq(type);
+        eqs.Add(newEq);
+        return eqs;
     }
     
     public static bool AcceptWork(bool accept)
     {
-        if (!Schedule.Disruptions) accept = false;
+        if (Schedule.Disruptions)
+        {
+            accept = false;
+            Schedule.Disruptions = false;
+        }
         Schedule.Stop();
         return accept;
     }

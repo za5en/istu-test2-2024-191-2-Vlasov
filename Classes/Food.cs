@@ -9,6 +9,16 @@ public class Food
     public FoodLocation Location { get; set; }
     public bool ReadyToUse { get; set; }
 
+    public Food()
+    {
+        InStock = true;
+        IsOrdered = false;
+        IsTransported = true;
+        Type = FoodType.Hay;
+        Location = FoodLocation.Stall;
+        ReadyToUse = false;
+    }
+
     public Food(bool inStock, bool isOrdered, bool isTransported, FoodType type, FoodLocation location, bool readyToUse)
     {
         InStock = inStock;

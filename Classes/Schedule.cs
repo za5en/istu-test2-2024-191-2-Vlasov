@@ -31,7 +31,7 @@ public class Schedule
             new DateTime(2024, 4, 19, 8, 0, 0),
             new DateTime(2024, 4, 19, 10, 0, 0)
         };
-        Duration = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
+        Duration = new List<int> { 30, 30, 30, 90, 150, 120, 220 };
         Responsible = new List<Responsible>
         {
             TestProject1.Responsible.Cattleman,
@@ -64,19 +64,19 @@ public class Schedule
     
     public bool Disrupted()
     {
-        Disruptions = false;
+        Disruptions = true;
         return Disruptions;
     }
     
     public bool Start()
     {
         IsActive = true;
-        return !IsActive;
+        return IsActive;
     }
     
     public bool Stop()
     {
         IsActive = false;
-        return !IsActive;
+        return IsActive;
     }
 }

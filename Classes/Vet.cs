@@ -8,6 +8,15 @@ public class Vet
     public bool InActivity { get; set; }
     public ActivityType Activity { get; set; }
 
+    public Vet()
+    {
+        IsWorking = true;
+        IsWorkingDay = true;
+        IsHealthy = true;
+        InActivity = true;
+        Activity = ActivityType.Treatment;
+    }
+    
     public Vet(bool isWorking, bool isWorkingDay, bool isHealthy, bool inActivity, ActivityType activity)
     {
         IsWorking = isWorking;
@@ -16,38 +25,40 @@ public class Vet
         InActivity = inActivity;
         Activity = activity;
     }
-    
+
     public bool WorkCondChange()
     {
         IsWorking = !IsWorking;
         return IsWorking;
     }
-    
+
     public bool HealthChange()
     {
         IsHealthy = !IsHealthy;
         IsWorkingDay = IsHealthy;
         return IsHealthy;
     }
-    
+
     public bool ActivityChg()
     {
         InActivity = !InActivity;
         return InActivity;
     }
-    
+
     public void ActivityTypeChg(ActivityType activityType)
     {
         Activity = activityType;
     }
-    
+
     public bool CheckHealth(Cow cow)
     {
+        Activity = ActivityType.Prevention;
         return cow.Health == CowHealth.Healthy;
     }
-    
+
     public bool Heal(Cow cow)
     {
+        Activity = ActivityType.Treatment;
         switch (cow.Health)
         {
             case CowHealth.Sick:
@@ -78,7 +89,7 @@ public class Vet
                 return true;
         }
     }
-    
+
     public bool UseEq(Equipment eq)
     {
         eq.IsUsing = true;

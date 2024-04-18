@@ -6,6 +6,13 @@ public class Building
     public bool ServiceRequired { get; set; }
     public bool IsClean { get; set; }
 
+    public Building()
+    {
+        Type = BuildingType.MilkingHall;
+        ServiceRequired = false;
+        IsClean = true;
+    }
+    
     public Building(BuildingType type, bool serviceRequired, bool isClean)
     {
         Type = type;
@@ -19,7 +26,7 @@ public class Building
         return ServiceRequired;
     }
     
-    public bool CowMove(Cow cow)
+    public BuildingType CowMove(Cow cow)
     {
         cow.Location = Type switch
         {
@@ -27,6 +34,6 @@ public class Building
             BuildingType.Barn => CowLocation.Stall,
             _ => cow.Location
         };
-        return true;
+        return Type;
     }
 }

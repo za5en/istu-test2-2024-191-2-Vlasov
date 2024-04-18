@@ -10,6 +10,17 @@ public class Worker
     public WorkerPost Post { get; set; }
     public bool IsAccepted { get; set; }
 
+    public Worker()
+    {
+        IsWorking = true;
+        IsWorkingDay = true;
+        IsHealthy = true;
+        WorkType = WorkType.Milking;
+        Location = WorkerLocation.MilkingHall;
+        Post = WorkerPost.Operator;
+        IsAccepted = false;
+    }
+    
     public Worker(bool isWorking, bool isWorkingDay, bool isHealthy, WorkType workType, WorkerLocation location, WorkerPost post, bool isAccepted)
     {
         IsWorking = isWorking;
@@ -34,11 +45,13 @@ public class Worker
         return IsHealthy;
     }
     
-    public void GetMilk(Cow cow)
+    public Product? GetMilk(Worker worker, Cow cow, Equipment eq)
     {
         WorkType = WorkType.Milking;
-        // UseEq();
-        cow.GiveMilk();
+        worker.WorkType = WorkType.Milking;
+        UseEq(eq);
+        var prod = cow.GiveMilk();
+        return prod;
     }
     
     public Food MakeFood(FoodType foodType)
@@ -47,30 +60,34 @@ public class Worker
         return food;
     }
     
-    public bool FeedCow(Cow cow)
+    public bool FeedCow(Worker worker, Cow cow)
     {
         WorkType = WorkType.Feeding;
+        worker.WorkType = WorkType.Feeding;
         cow.IsHungry = false;
         return true;
     }
     
-    public bool WaterCow(Cow cow)
+    public bool WaterCow(Worker worker, Cow cow)
     {
         WorkType = WorkType.Watering;
+        worker.WorkType = WorkType.Watering;
         cow.IsThirsty = false;
         return true;
     }
     
-    public bool CleanBld(Building bld)
+    public bool CleanBld(Worker worker, Building bld)
     {
-        WorkType = WorkType.Clearing;
+        WorkType = WorkType.Cleaning;
+        worker.WorkType = WorkType.Cleaning;
         bld.IsClean = true;
-        return !IsWorking;
+        return bld.IsClean;
     }
     
-    public bool CleanEq(Equipment eq)
+    public bool CleanEq(Worker worker, Equipment eq)
     {
-        WorkType = WorkType.Clearing;
+        WorkType = WorkType.Cleaning;
+        worker.WorkType = WorkType.Cleaning;
         eq.IsClean = true;
         return eq.IsClean;
     }
@@ -95,9 +112,10 @@ public class Worker
         return !eq.IsBroken;
     }
     
-    public bool RepairEq(Equipment eq)
+    public bool RepairEq(Worker worker, Equipment eq)
     {
         WorkType = WorkType.Fixing;
+        worker.WorkType = WorkType.Fixing;
         if (eq.IsBroken)
         {
             var rand = new Random();

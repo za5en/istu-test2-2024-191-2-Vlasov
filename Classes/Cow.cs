@@ -10,6 +10,17 @@ public class Cow
     public bool IsHungry { get; set; }
     public bool IsThirsty { get; set; }
 
+    public Cow()
+    {
+        Type = CowType.Cow;
+        Condition = CowCond.Milking;
+        Location = CowLocation.MilkingHall;
+        Health = CowHealth.Healthy;
+        InQueue = false;
+        IsHungry = false;
+        IsThirsty = false;
+    }
+    
     public Cow(CowType type, CowCond condition, CowLocation location, CowHealth health, bool inQueue, bool isHungry, bool isThirsty)
     {
         Type = type;
@@ -55,7 +66,7 @@ public class Cow
             IsThirsty = true;
             return milk;
         }
-        else return null;
+        return null;
     }
     
     public bool Drink(Water water)
@@ -76,21 +87,21 @@ public class Cow
         return IsHungry;
     }
     
-    public bool WakeUp()
+    public CowCond WakeUp()
     {
         if (Condition == CowCond.Sleeping)
         {
             Condition = CowCond.Living;
         }
-        return true;
+        return Condition;
     }
     
-    public bool Sleep()
+    public CowCond Sleep()
     {
         if (Condition != CowCond.Sleeping)
         {
             Condition = CowCond.Sleeping;
         }
-        return true;
+        return Condition;
     }
 }
