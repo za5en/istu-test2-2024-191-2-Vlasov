@@ -802,8 +802,151 @@ public class PropMethodsTest
         Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         Assert.AreEqual(false, Foreman.Schedule.IsActive);
     }
-}
 
-//тестирование вариантов использования
+    //тестирование вариантов использования
+    [Test]
+    public void TestWorker()
+    {
+        //рабочий
+
+        //Дойка коровы
+        var prod = workers[1].GetMilk(worker: workers[1], cow: cows.First(), equipment[1]);
+        var prodExp = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
+        Assert.AreEqual(WorkType.Milking, workers[1].WorkType);
+        Assert.AreEqual(200, equipment[1].UsageTime);
+        Assert.AreEqual(true, equipment[1].IsUsing);
+        Assert.AreEqual(prodExp, prod);
+        //Кормление коровы
+        workers[2].FeedCow(worker: workers[2], cow: cows.First());
+        Assert.AreEqual(WorkType.Feeding, workers[2].WorkType);
+        Assert.AreEqual(false, cows.First().IsHungry);
+        //Поение коровы
+        workers[2].WaterCow(worker: workers[2], cow: cows.First());
+        Assert.AreEqual(WorkType.Watering, workers[2].WorkType);
+        Assert.AreEqual(false, cows.First().IsThirsty);
+        //Уборка помещения
+        workers.First().CleanBld(worker: workers[0], building);
+        Assert.AreEqual(WorkType.Cleaning, workers[0].WorkType);
+        Assert.AreEqual(true, building.IsClean);
+        //Мойка оборудования
+        workers.First().CleanEq(workers[0], equipment[1]);
+        Assert.AreEqual(WorkType.Cleaning, workers[0].WorkType);
+        Assert.AreEqual(true, equipment[1].IsClean);
+    }
+
+    [Test]
+    public void TestForeman()
+    {
+        //бригадир
+        equipment = new List<Equipment>();
+        equipment.AddRange(new List<Equipment>()
+        {
+            new(type: EqType.Loader, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.WateringMachine, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.MilkingMachine, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.CowFlipper, isBroken: true, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.Scraper, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+        });
+        //Установка расписания
+        foreman.SetChart();
+        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        {
+            ScheduleActivity.Checking,
+            ScheduleActivity.Feeding,
+            ScheduleActivity.Watering,
+            ScheduleActivity.Health,
+            ScheduleActivity.Milking,
+            ScheduleActivity.Cleaning,
+            ScheduleActivity.Breaktime
+        };
+        List<DateTime> dateTimes = new List<DateTime>
+        {
+            new(2024, 4, 19, 5, 0, 0),
+            new(2024, 4, 19, 5, 30, 0),
+            new(2024, 4, 19, 6, 0, 0),
+            new(2024, 4, 19, 6, 30, 0),
+            new(2024, 4, 19, 7, 30, 0),
+            new(2024, 4, 19, 8, 0, 0),
+            new(2024, 4, 19, 10, 0, 0)
+        };
+        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
+        List<Responsible> responsible = new List<Responsible>
+        {
+            Responsible.Cattleman,
+            Responsible.CalfHouse,
+            Responsible.CalfHouse,
+            Responsible.Vet,
+            Responsible.Operator,
+            Responsible.Cattleman,
+            Responsible.Vet
+        };
+        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
+            responsible: responsible, isActive: true, disruptions: false);
+        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        //Заказ корма
+        foreman.Order(food);
+        var foodCheck = new Food(inStock: true, isOrdered: true, isTransported: false, type: FoodType.Hay,
+            location: FoodLocation.Warehouse, readyToUse: false);
+        Assert.AreEqual(foodCheck, food);
+        //Приёмка работы
+        Foreman.AcceptWork(true);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        //Заказ оборудования
+        var newEq = foreman.BuyEq(equipment.First().Type);
+        var oneEqCheck = new Equipment(type: EqType.WateringMachine, isBroken: false, isUsing: false,
+            serviceRequired: false, usageTime: 0, isClean: true);
+        Assert.AreEqual(oneEqCheck, newEq);
+        //Утилизация оборудования
+        equipment = foreman.DeleteEq(equipment.First(), equipment);
+        var eqCheck = new List<Equipment>();
+        eqCheck.AddRange(new List<Equipment>()
+        {
+            new(type: EqType.WateringMachine, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.MilkingMachine, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.CowFlipper, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.Scraper, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 100,
+                isClean: true),
+            new(type: EqType.Loader, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 0,
+                isClean: true),
+        });
+        Assert.AreEqual(eqCheck, equipment);
+        Assert.AreEqual(true, Foreman.Schedule.Disruptions);
+    }
+
+    [Test]
+    public void TestVet()
+    {
+        //ветеринар
+
+        //Проверка состояния здоровья коровы
+        vet.CheckHealth(cows.First());
+        Assert.AreEqual(ActivityType.Prevention, vet.Activity);
+        //Лечение коровы
+        cows[2].Health = CowHealth.Sick;
+        var heal = vet.Heal(cows[2]);
+        Assert.AreEqual(ActivityType.Treatment, vet.Activity);
+        if (heal)
+        {
+            Assert.AreEqual(CowHealth.Healthy, cows[1].Health);
+            Assert.AreEqual(CowLocation.Stall, cows[1].Location);
+        }
+        else
+        {
+            Assert.AreEqual(CowHealth.Sick, cows[1].Health);
+            Assert.AreEqual(CowLocation.Stall, cows[1].Location);
+            Assert.AreEqual(false, Foreman.Schedule.Disruptions);
+            Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        }
+    }
+}
 
 //тестирование сценариев
