@@ -69,22 +69,20 @@ public class Cow
         return null;
     }
     
-    public bool Drink(Water water)
+    public void Drink(Water water)
     {
-        if (!IsThirsty) return IsThirsty;
+        if (!IsThirsty) return;
         Condition = CowCond.Drinking;
         water.InStock = false;
         IsThirsty = false;
-        return IsThirsty;
     }
     
-    public bool Eat(Food food)
+    public void Eat(Food food)
     {
-        if (!IsHungry) return IsHungry;
+        if (!IsHungry) return;
         Condition = CowCond.Eating;
         food.InStock = false;
         IsHungry = false;
-        return IsHungry;
     }
     
     public CowCond WakeUp()

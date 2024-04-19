@@ -32,17 +32,15 @@ public class Worker
         IsAccepted = isAccepted;
     }
 
-    public bool WorkCondChange()
+    public void WorkCondChange()
     {
         IsWorking = !IsWorking;
-        return IsWorking;
     }
     
-    public bool HealthChange()
+    public void HealthChange()
     {
         IsHealthy = !IsHealthy;
         IsWorkingDay = IsHealthy;
-        return IsHealthy;
     }
     
     public Product? GetMilk(Worker worker, Cow cow, Equipment eq)
@@ -60,47 +58,42 @@ public class Worker
         return food;
     }
     
-    public bool FeedCow(Worker worker, Cow cow)
+    public void FeedCow(Worker worker, Cow cow)
     {
         WorkType = WorkType.Feeding;
         worker.WorkType = WorkType.Feeding;
         cow.IsHungry = false;
-        return true;
     }
     
-    public bool WaterCow(Worker worker, Cow cow)
+    public void WaterCow(Worker worker, Cow cow)
     {
         WorkType = WorkType.Watering;
         worker.WorkType = WorkType.Watering;
         cow.IsThirsty = false;
-        return true;
     }
     
-    public bool CleanBld(Worker worker, Building bld)
+    public void CleanBld(Worker worker, Building bld)
     {
         WorkType = WorkType.Cleaning;
         worker.WorkType = WorkType.Cleaning;
         bld.IsClean = true;
-        return bld.IsClean;
     }
     
-    public bool CleanEq(Worker worker, Equipment eq)
+    public void CleanEq(Worker worker, Equipment eq)
     {
         WorkType = WorkType.Cleaning;
         worker.WorkType = WorkType.Cleaning;
         eq.IsClean = true;
-        return eq.IsClean;
     }
     
-    public bool UseEq(Equipment eq)
+    public void UseEq(Equipment eq)
     {
         eq.IsUsing = true;
         eq.IsClean = false;
         eq.UsageTime += 100;
-        return eq.IsUsing;
     }
     
-    public bool CheckEq(Equipment eq)
+    public void CheckEq(Equipment eq)
     {
         if (eq.UsageTime > 10000)
         {
@@ -110,32 +103,62 @@ public class Worker
         {
             eq.IsBroken = true;
         }
-        return !eq.IsBroken;
     }
     
-    public bool RepairEq(Worker worker, Equipment eq)
+    public bool RepairEq(Worker worker, Equipment eq, bool fail = false)
     {
         WorkType = WorkType.Fixing;
         worker.WorkType = WorkType.Fixing;
         if (eq.IsBroken)
         {
-            var rand = new Random();
-            var a = rand.Next(2);
-            if (a == 1)
+            if (!fail)
             {
-                eq.IsBroken = false;
-                eq.UsageTime = 0;
-                eq.ServiceRequired = false;
-                return true;
+                var rand = new Random();
+                var a = rand.Next(2);
+                if (a == 1)
+                {
+                    eq.IsBroken = false;
+                    eq.UsageTime = 0;
+                    eq.ServiceRequired = false;
+                    return true;
+                }
+
+                // Foreman.DeleteEq(eq);
+                Foreman.Schedule.Disruptions = true;
+                Foreman.AcceptWork(false);
+                return false;
             }
-            // Foreman.DeleteEq(eq);
+            Foreman.EqUpdate = true;
             Foreman.Schedule.Disruptions = true;
-            Foreman.AcceptWork(false);
             return false;
         }
         if (!eq.ServiceRequired) return true;
         eq.UsageTime = 0;
         eq.ServiceRequired = false;
         return true;
+    }
+
+    public void GetChart()
+    {
+        Foreman.ChartRequest = true;
+    }
+
+    public Schedule CheckChart()
+    {
+        return Foreman.Schedule;
+    }
+    
+    public void CheckHealthRequest()
+    {
+        Vet.CheckHealthRequest = true;
+    }
+    
+    public Equipment GetEq(Equipment eq)
+    {
+        Foreman.EqUpdate = false;
+        eq.IsUsing = true;
+        eq.IsClean = false;
+        eq.UsageTime += 100;
+        return eq;
     }
 }

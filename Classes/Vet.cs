@@ -8,6 +8,8 @@ public class Vet
     public bool InActivity { get; set; }
     public ActivityType Activity { get; set; }
 
+    public static bool CheckHealthRequest = false;
+
     public Vet()
     {
         IsWorking = true;
@@ -32,11 +34,10 @@ public class Vet
         return IsWorking;
     }
 
-    public bool HealthChange()
+    public void HealthChange()
     {
         IsHealthy = !IsHealthy;
         IsWorkingDay = IsHealthy;
-        return IsHealthy;
     }
 
     public bool ActivityChg()
@@ -93,10 +94,9 @@ public class Vet
         }
     }
 
-    public bool UseEq(Equipment eq)
+    public void UseEq(Equipment eq)
     {
         eq.IsUsing = true;
         eq.UsageTime += 100;
-        return eq.IsUsing;
     }
 }

@@ -7,6 +7,8 @@ public class Foreman
     public bool IsHealthy { get; set; }
     public CheckType CheckType { get; set; }
     public bool IsChecking { get; set; }
+    public static bool ChartRequest = false;
+    public static bool EqUpdate = false;
     public List<Cow> Cows = new List<Cow>();
     public List<Worker> Workers = new List<Worker>();
     public List<Equipment> Eqs = new List<Equipment>();
@@ -32,17 +34,15 @@ public class Foreman
         IsChecking = false;
     }
 
-    public bool WorkCondChange()
+    public void WorkCondChange()
     {
         IsWorking = !IsWorking;
-        return IsWorking;
     }
     
-    public bool HealthChange()
+    public void HealthChange()
     {
         IsHealthy = !IsHealthy;
         IsWorkingDay = IsHealthy;
-        return IsHealthy;
     }
     
     public void CheckTypeChange(CheckType checkType)
@@ -50,23 +50,21 @@ public class Foreman
         CheckType = checkType;
     }
     
-    public bool CheckChange()
+    public void CheckChange()
     {
         IsChecking = !IsChecking;
-        return IsChecking;
     }
     
-    public bool Order(Food food)
+    public void Order(Food food)
     {
         food.InStock = true;
         food.Location = FoodLocation.Warehouse;
         food.ReadyToUse = false;
         food.IsTransported = false;
         food.IsOrdered = true;
-        return true;
     }
     
-    public bool SetChart()
+    public void SetChart()
     {
         List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
         {
@@ -106,7 +104,6 @@ public class Foreman
         Schedule.IsActive = false;
         Schedule.Disruptions = false;
         Schedule.Start();
-        return true;
     }
     
     public Equipment BuyEq(EqType type)
@@ -116,7 +113,7 @@ public class Foreman
         return eq;
     }
     
-    public List<Equipment> DeleteEq(Equipment eq, List<Equipment> eqs)
+    public List<Equipment> DeleteEq(Equipment eq, List<Equipment> eqs, bool buy = true)
     {
         var type = eq.Type;
         foreach (var equip in Eqs.Where(equip => eq.Type == equip.Type).ToList())
@@ -131,6 +128,7 @@ public class Foreman
         }
         Schedule.Disruptions = true;
 
+        if (!buy) return eqs;
         var newEq = BuyEq(type);
         eqs.Add(newEq);
         return eqs;
