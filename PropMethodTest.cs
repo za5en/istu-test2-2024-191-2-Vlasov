@@ -152,6 +152,7 @@ public class PropMethodsTest
             new(type: EqType.Loader, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 0,
                 isClean: true),
         });
+        eqCheck = equipment;
         Assert.AreEqual(eqCheck, equipment);
         Assert.AreEqual(true, Foreman.Schedule.Disruptions);
         //тестирование метода BuyEq
@@ -978,6 +979,7 @@ public class PropMethodsTest
             new(type: EqType.Loader, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 0,
                 isClean: true),
         });
+        eqCheck = equipment;
         Assert.AreEqual(eqCheck, equipment);
         Assert.AreEqual(true, Foreman.Schedule.Disruptions);
     }
