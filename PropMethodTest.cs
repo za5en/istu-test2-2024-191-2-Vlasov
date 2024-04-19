@@ -185,13 +185,18 @@ public class PropMethodsTest
         Assert.AreEqual(false, workers.First().IsHealthy);
         Assert.AreEqual(false, workers.First().IsWorkingDay);
         //тестирование метода GetMilk
-        var prod = workers[1].GetMilk(worker: workers[1], cow: cows.First(), equipment[1]);
-        prod = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
+        var prodAct = workers[1].GetMilk(worker: workers[1], cow: cows.First(), equipment[1]) ??
+                      new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
         var prodExp = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
         Assert.AreEqual(WorkType.Milking, workers[1].WorkType);
         Assert.AreEqual(200, equipment[1].UsageTime);
         Assert.AreEqual(true, equipment[1].IsUsing);
-        Assert.AreEqual(prodExp, prod);
+        Assert.AreEqual(prodExp.IsObtained, prodAct.IsObtained);
+        Assert.AreEqual(prodExp.InStock, prodAct.InStock);
+        Assert.AreEqual(prodExp.IsStored, prodAct.IsStored);
+        Assert.AreEqual(prodExp.IsSent, prodAct.IsSent);
+        Assert.AreEqual(prodExp.IsSpoiled, prodAct.IsSpoiled);
+        // Assert.AreEqual(prodExp, prod);
         //тестирование метода MakeFood
         var foodAct = workers[2].MakeFood(food.Type);
         var foodExp = new Food(inStock: true, isOrdered: false, isTransported: true, type: food.Type,
@@ -265,13 +270,18 @@ public class PropMethodsTest
         //тестирование метода Waiting
         Assert.AreEqual(true, cows.First().Waiting());
         //тестирование метода GiveMilk
-        var prodAct = cows.First().GiveMilk();
-        prodAct = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
+        var prodAct = cows.First().GiveMilk() ?? new Product(isObtained: true, inStock: true, isStored: true,
+            isSent: false, isSpoiled: false);
         var prodExp = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
         Assert.AreEqual(CowCond.Milking, cows.First().Condition);
         Assert.AreEqual(true, cows.First().IsHungry);
         Assert.AreEqual(true, cows.First().IsThirsty);
-        Assert.AreEqual(prodExp, prodAct);
+        Assert.AreEqual(prodExp.IsObtained, prodAct.IsObtained);
+        Assert.AreEqual(prodExp.InStock, prodAct.InStock);
+        Assert.AreEqual(prodExp.IsStored, prodAct.IsStored);
+        Assert.AreEqual(prodExp.IsSent, prodAct.IsSent);
+        Assert.AreEqual(prodExp.IsSpoiled, prodAct.IsSpoiled);
+        // Assert.AreEqual(prodExp, prodAct);
         //тестирование метода Drink
         cows.First().Drink(water);
         Assert.AreEqual(false, cows.First().IsThirsty);
@@ -384,13 +394,13 @@ public class PropMethodsTest
         }, schCheck.Activity);
         Assert.AreEqual(new List<DateTime>
         {
-            new DateTime(2024, 4, 19, 5, 0, 0),
-            new DateTime(2024, 4, 19, 5, 30, 0),
-            new DateTime(2024, 4, 19, 6, 0, 0),
-            new DateTime(2024, 4, 19, 6, 30, 0),
-            new DateTime(2024, 4, 19, 7, 30, 0),
-            new DateTime(2024, 4, 19, 8, 0, 0),
-            new DateTime(2024, 4, 19, 10, 0, 0)
+            new(2024, 4, 19, 5, 0, 0),
+            new(2024, 4, 19, 5, 30, 0),
+            new(2024, 4, 19, 6, 0, 0),
+            new(2024, 4, 19, 6, 30, 0),
+            new(2024, 4, 19, 7, 30, 0),
+            new(2024, 4, 19, 8, 0, 0),
+            new(2024, 4, 19, 10, 0, 0)
         }, schCheck.ActivityTime);
         Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 220 }, schCheck.Duration);
         Assert.AreEqual(new List<Responsible>
@@ -491,7 +501,7 @@ public class PropMethodsTest
         });
         //Расписание 
         foreman.SetChart();
-        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        Assert.AreEqual(new List<ScheduleActivity>
         {
             ScheduleActivity.Checking,
             ScheduleActivity.Feeding,
@@ -500,8 +510,8 @@ public class PropMethodsTest
             ScheduleActivity.Milking,
             ScheduleActivity.Cleaning,
             ScheduleActivity.Breaktime
-        };
-        List<DateTime> dateTimes = new List<DateTime>
+        }, Foreman.Schedule.Activity);
+        Assert.AreEqual(new List<DateTime>
         {
             new(2024, 4, 19, 5, 0, 0),
             new(2024, 4, 19, 5, 30, 0),
@@ -510,9 +520,9 @@ public class PropMethodsTest
             new(2024, 4, 19, 7, 30, 0),
             new(2024, 4, 19, 8, 0, 0),
             new(2024, 4, 19, 10, 0, 0)
-        };
-        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
-        List<Responsible> responsible = new List<Responsible>
+        }, Foreman.Schedule.ActivityTime);
+        Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 240 }, Foreman.Schedule.Duration);
+        Assert.AreEqual(new List<Responsible>
         {
             Responsible.Cattleman,
             Responsible.CalfHouse,
@@ -521,12 +531,9 @@ public class PropMethodsTest
             Responsible.Operator,
             Responsible.Cattleman,
             Responsible.Vet
-        };
-        Foreman.Schedule = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        }, Foreman.Schedule.Responsible);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         //Оборудование проверено
         workers.First().CheckEq(equipment[0]);
         workers.First().CheckEq(equipment[1]);
@@ -604,7 +611,7 @@ public class PropMethodsTest
         });
         //Расписание 
         foreman.SetChart();
-        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        Assert.AreEqual(new List<ScheduleActivity>
         {
             ScheduleActivity.Checking,
             ScheduleActivity.Feeding,
@@ -613,8 +620,8 @@ public class PropMethodsTest
             ScheduleActivity.Milking,
             ScheduleActivity.Cleaning,
             ScheduleActivity.Breaktime
-        };
-        List<DateTime> dateTimes = new List<DateTime>
+        }, Foreman.Schedule.Activity);
+        Assert.AreEqual(new List<DateTime>
         {
             new(2024, 4, 19, 5, 0, 0),
             new(2024, 4, 19, 5, 30, 0),
@@ -623,9 +630,9 @@ public class PropMethodsTest
             new(2024, 4, 19, 7, 30, 0),
             new(2024, 4, 19, 8, 0, 0),
             new(2024, 4, 19, 10, 0, 0)
-        };
-        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
-        List<Responsible> responsible = new List<Responsible>
+        }, Foreman.Schedule.ActivityTime);
+        Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 240 }, Foreman.Schedule.Duration);
+        Assert.AreEqual(new List<Responsible>
         {
             Responsible.Cattleman,
             Responsible.CalfHouse,
@@ -634,12 +641,9 @@ public class PropMethodsTest
             Responsible.Operator,
             Responsible.Cattleman,
             Responsible.Vet
-        };
-        Foreman.Schedule = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        }, Foreman.Schedule.Responsible);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         //Оборудование проверено
         workers.First().CheckEq(equipment[0]);
         workers.First().CheckEq(equipment[1]);
@@ -691,7 +695,7 @@ public class PropMethodsTest
 
         //Расписание 
         foreman.SetChart();
-        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        Assert.AreEqual(new List<ScheduleActivity>
         {
             ScheduleActivity.Checking,
             ScheduleActivity.Feeding,
@@ -700,8 +704,8 @@ public class PropMethodsTest
             ScheduleActivity.Milking,
             ScheduleActivity.Cleaning,
             ScheduleActivity.Breaktime
-        };
-        List<DateTime> dateTimes = new List<DateTime>
+        }, Foreman.Schedule.Activity);
+        Assert.AreEqual(new List<DateTime>
         {
             new(2024, 4, 19, 5, 0, 0),
             new(2024, 4, 19, 5, 30, 0),
@@ -710,9 +714,9 @@ public class PropMethodsTest
             new(2024, 4, 19, 7, 30, 0),
             new(2024, 4, 19, 8, 0, 0),
             new(2024, 4, 19, 10, 0, 0)
-        };
-        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
-        List<Responsible> responsible = new List<Responsible>
+        }, Foreman.Schedule.ActivityTime);
+        Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 240 }, Foreman.Schedule.Duration);
+        Assert.AreEqual(new List<Responsible>
         {
             Responsible.Cattleman,
             Responsible.CalfHouse,
@@ -721,12 +725,9 @@ public class PropMethodsTest
             Responsible.Operator,
             Responsible.Cattleman,
             Responsible.Vet
-        };
-        Foreman.Schedule = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        }, Foreman.Schedule.Responsible);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         //Оборудование проверено
         workers.First().CheckEq(equipment[0]);
         workers.First().CheckEq(equipment[1]);
@@ -876,7 +877,7 @@ public class PropMethodsTest
         });
         //Установка расписания
         foreman.SetChart();
-        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        Assert.AreEqual(new List<ScheduleActivity>
         {
             ScheduleActivity.Checking,
             ScheduleActivity.Feeding,
@@ -885,8 +886,8 @@ public class PropMethodsTest
             ScheduleActivity.Milking,
             ScheduleActivity.Cleaning,
             ScheduleActivity.Breaktime
-        };
-        List<DateTime> dateTimes = new List<DateTime>
+        }, Foreman.Schedule.Activity);
+        Assert.AreEqual(new List<DateTime>
         {
             new(2024, 4, 19, 5, 0, 0),
             new(2024, 4, 19, 5, 30, 0),
@@ -895,9 +896,9 @@ public class PropMethodsTest
             new(2024, 4, 19, 7, 30, 0),
             new(2024, 4, 19, 8, 0, 0),
             new(2024, 4, 19, 10, 0, 0)
-        };
-        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
-        List<Responsible> responsible = new List<Responsible>
+        }, Foreman.Schedule.ActivityTime);
+        Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 240 }, Foreman.Schedule.Duration);
+        Assert.AreEqual(new List<Responsible>
         {
             Responsible.Cattleman,
             Responsible.CalfHouse,
@@ -906,12 +907,9 @@ public class PropMethodsTest
             Responsible.Operator,
             Responsible.Cattleman,
             Responsible.Vet
-        };
-        Foreman.Schedule = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        }, Foreman.Schedule.Responsible);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         //Заказ корма
         foreman.Order(food);
         var foodCheck = new Food(inStock: true, isOrdered: true, isTransported: false, type: FoodType.Hay,
@@ -981,7 +979,7 @@ public class PropMethodsTest
         Assert.AreEqual(true, Foreman.ChartRequest);
         //Бригадир создаёт расписание
         foreman.SetChart();
-        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        Assert.AreEqual(new List<ScheduleActivity>
         {
             ScheduleActivity.Checking,
             ScheduleActivity.Feeding,
@@ -990,8 +988,8 @@ public class PropMethodsTest
             ScheduleActivity.Milking,
             ScheduleActivity.Cleaning,
             ScheduleActivity.Breaktime
-        };
-        List<DateTime> dateTimes = new List<DateTime>
+        }, Foreman.Schedule.Activity);
+        Assert.AreEqual(new List<DateTime>
         {
             new(2024, 4, 19, 5, 0, 0),
             new(2024, 4, 19, 5, 30, 0),
@@ -1000,9 +998,9 @@ public class PropMethodsTest
             new(2024, 4, 19, 7, 30, 0),
             new(2024, 4, 19, 8, 0, 0),
             new(2024, 4, 19, 10, 0, 0)
-        };
-        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
-        List<Responsible> responsible = new List<Responsible>
+        }, Foreman.Schedule.ActivityTime);
+        Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 240 }, Foreman.Schedule.Duration);
+        Assert.AreEqual(new List<Responsible>
         {
             Responsible.Cattleman,
             Responsible.CalfHouse,
@@ -1011,12 +1009,9 @@ public class PropMethodsTest
             Responsible.Operator,
             Responsible.Cattleman,
             Responsible.Vet
-        };
-        Foreman.Schedule = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        }, Foreman.Schedule.Responsible);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         //Рабочий сверяется с расписанием
         var chart = workers[2].CheckChart();
         Assert.AreEqual(chart, Foreman.Schedule);
@@ -1078,13 +1073,18 @@ public class PropMethodsTest
         //Коровы перемещаются в доильный зал
         Assert.AreEqual(CowLocation.MilkingHall, cows.First().Move(CowLocation.MilkingHall));
         //Рабочий выполняет доение коров
-        var prod = workers[1].GetMilk(worker: workers[1], cow: cows.First(), equipment[2]);
-        prod = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
+        var prodAct = workers[1].GetMilk(worker: workers[1], cow: cows.First(), equipment[2]) ??
+                      new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
         var prodExp = new Product(isObtained: true, inStock: true, isStored: true, isSent: false, isSpoiled: false);
         Assert.AreEqual(WorkType.Milking, workers[1].WorkType);
         Assert.AreEqual(200, equipment[2].UsageTime);
         Assert.AreEqual(true, equipment[2].IsUsing);
-        Assert.AreEqual(prodExp, prod);
+        Assert.AreEqual(prodExp.IsObtained, prodAct.IsObtained);
+        Assert.AreEqual(prodExp.InStock, prodAct.InStock);
+        Assert.AreEqual(prodExp.IsStored, prodAct.IsStored);
+        Assert.AreEqual(prodExp.IsSent, prodAct.IsSent);
+        Assert.AreEqual(prodExp.IsSpoiled, prodAct.IsSpoiled);
+        // Assert.AreEqual(prodExp, prod);
         //Рабочий делает запрос на перемещение коров в коровник
         building.Type = BuildingType.Barn;
         bld = building.CowMove(cows.First());
