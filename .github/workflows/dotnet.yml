@@ -21,8 +21,7 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Restore dependencies
-        run: dotnet publish istu-test-2-2024-191-2-Vlasov.sln -c Release -o out
-             dotnet restore
+        run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
       - name: Test
