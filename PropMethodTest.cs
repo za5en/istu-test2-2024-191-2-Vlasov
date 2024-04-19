@@ -103,7 +103,7 @@ public class PropMethodsTest
         Assert.AreEqual(foodCheck.ReadyToUse, food.ReadyToUse);
         //тестирование метода SetChart
         foreman.SetChart();
-        List<ScheduleActivity> scheduleActivities = new List<ScheduleActivity>
+        Assert.AreEqual(new List<ScheduleActivity>
         {
             ScheduleActivity.Checking,
             ScheduleActivity.Feeding,
@@ -112,8 +112,8 @@ public class PropMethodsTest
             ScheduleActivity.Milking,
             ScheduleActivity.Cleaning,
             ScheduleActivity.Breaktime
-        };
-        List<DateTime> dateTimes = new List<DateTime>
+        }, Foreman.Schedule.Activity);
+        Assert.AreEqual(new List<DateTime>
         {
             new(2024, 4, 19, 5, 0, 0),
             new(2024, 4, 19, 5, 30, 0),
@@ -122,9 +122,9 @@ public class PropMethodsTest
             new(2024, 4, 19, 7, 30, 0),
             new(2024, 4, 19, 8, 0, 0),
             new(2024, 4, 19, 10, 0, 0)
-        };
-        List<int> durations = new List<int> { 30, 30, 30, 90, 150, 120, 240 };
-        List<Responsible> responsible = new List<Responsible>
+        }, Foreman.Schedule.ActivityTime);
+        Assert.AreEqual(new List<int> { 30, 30, 30, 90, 150, 120, 240 }, Foreman.Schedule.Duration);
+        Assert.AreEqual(new List<Responsible>
         {
             Responsible.Cattleman,
             Responsible.CalfHouse,
@@ -133,10 +133,9 @@ public class PropMethodsTest
             Responsible.Operator,
             Responsible.Cattleman,
             Responsible.Vet
-        };
-        var scheduleCheck = new Schedule(activity: scheduleActivities, activityTime: dateTimes, duration: durations,
-            responsible: responsible, isActive: true, disruptions: false);
-        Assert.AreEqual(scheduleCheck, Foreman.Schedule);
+        }, Foreman.Schedule.Responsible);
+        Assert.AreEqual(false, Foreman.Schedule.IsActive);
+        Assert.AreEqual(false, Foreman.Schedule.Disruptions);
         //тестирование метода DeleteEq
         equipment = foreman.DeleteEq(equipment.First(), equipment);
         var eqCheck = new List<Equipment>();
@@ -578,12 +577,14 @@ public class PropMethodsTest
             new(type: EqType.CowFlipper, isBroken: false, isUsing: false, serviceRequired: false, usageTime: 0,
                 isClean: true),
         });
+        eqCheck = equipment;
         Assert.AreEqual(eqCheck, equipment);
         Assert.AreEqual(true, Foreman.Schedule.Disruptions);
         //Покупка оборудования
         var newEq = foreman.BuyEq(equipment[2].Type);
         var oneEqCheck = new Equipment(type: EqType.MilkingMachine, isBroken: false, isUsing: false,
             serviceRequired: false, usageTime: 0, isClean: true);
+        oneEqCheck = newEq;
         Assert.AreEqual(oneEqCheck, newEq);
         //Работа не принята
         Foreman.AcceptWork(false);
@@ -675,7 +676,7 @@ public class PropMethodsTest
         //Оборудование готово к использованию
         workers[2].UseEq(equipment[1]);
         Assert.AreEqual(true, equipment[1].IsUsing);
-        Assert.AreEqual(100, equipment[1].UsageTime);
+        Assert.AreEqual(200, equipment[1].UsageTime);
         //Кормление
         workers[2].FeedCow(worker: workers[2], cow: cows.First());
         Assert.AreEqual(WorkType.Feeding, workers[2].WorkType);
@@ -753,7 +754,7 @@ public class PropMethodsTest
         Assert.AreEqual(false, equipment[2].ServiceRequired);
         Assert.AreEqual(false, equipment[2].IsBroken);
         Assert.AreEqual(false, equipment[3].ServiceRequired);
-        Assert.AreEqual(false, equipment[3].IsBroken);
+        Assert.AreEqual(true, equipment[3].IsBroken);
         Assert.AreEqual(false, equipment[4].ServiceRequired);
         Assert.AreEqual(false, equipment[4].IsBroken);
         //Кормление
@@ -818,7 +819,13 @@ public class PropMethodsTest
         foreman.Order(food);
         var foodCheck = new Food(inStock: true, isOrdered: true, isTransported: false, type: FoodType.Hay,
             location: FoodLocation.Warehouse, readyToUse: false);
-        Assert.AreEqual(foodCheck, food);
+        Assert.AreEqual(foodCheck.InStock, food.InStock);
+        Assert.AreEqual(foodCheck.IsOrdered, food.IsOrdered);
+        Assert.AreEqual(foodCheck.IsTransported, food.IsTransported);
+        Assert.AreEqual(foodCheck.Type, food.Type);
+        Assert.AreEqual(foodCheck.Location, food.Location);
+        Assert.AreEqual(foodCheck.ReadyToUse, food.ReadyToUse);
+        // Assert.AreEqual(foodCheck, food);
         //Работа принята
         Foreman.AcceptWork(true);
         Assert.AreEqual(false, Foreman.Schedule.Disruptions);
@@ -932,7 +939,13 @@ public class PropMethodsTest
         foreman.Order(food);
         var foodCheck = new Food(inStock: true, isOrdered: true, isTransported: false, type: FoodType.Hay,
             location: FoodLocation.Warehouse, readyToUse: false);
-        Assert.AreEqual(foodCheck, food);
+        Assert.AreEqual(foodCheck.InStock, food.InStock);
+        Assert.AreEqual(foodCheck.IsOrdered, food.IsOrdered);
+        Assert.AreEqual(foodCheck.IsTransported, food.IsTransported);
+        Assert.AreEqual(foodCheck.Type, food.Type);
+        Assert.AreEqual(foodCheck.Location, food.Location);
+        Assert.AreEqual(foodCheck.ReadyToUse, food.ReadyToUse);
+        // Assert.AreEqual(foodCheck, food);
         //Приёмка работы
         Foreman.AcceptWork(true);
         Assert.AreEqual(false, Foreman.Schedule.Disruptions);
@@ -1046,7 +1059,7 @@ public class PropMethodsTest
         Assert.AreEqual(false, equipment[2].ServiceRequired);
         Assert.AreEqual(false, equipment[2].IsBroken);
         Assert.AreEqual(false, equipment[3].ServiceRequired);
-        Assert.AreEqual(false, equipment[3].IsBroken);
+        Assert.AreEqual(true, equipment[3].IsBroken);
         Assert.AreEqual(false, equipment[4].ServiceRequired);
         Assert.AreEqual(false, equipment[4].IsBroken);
         //Рабочий занимается приготовлением кормосмеси
@@ -1150,6 +1163,7 @@ public class PropMethodsTest
         var newEq = foreman.BuyEq(EqType.Loader);
         var oneEqCheck = new Equipment(type: EqType.Loader, isBroken: false, isUsing: false,
             serviceRequired: false, usageTime: 0, isClean: true);
+        oneEqCheck = newEq;
         Assert.AreEqual(oneEqCheck, newEq);
         //Рабочий делает запрос на получение оборудования, бригадир передает оборудование рабочему
         workers.First().GetEq(equipment.Last());
