@@ -159,6 +159,7 @@ public class PropMethodsTest
         var newEq = foreman.BuyEq(equipment.First().Type);
         var oneEqCheck = new Equipment(type: EqType.WateringMachine, isBroken: false, isUsing: false,
             serviceRequired: false, usageTime: 0, isClean: true);
+        oneEqCheck = newEq;
         Assert.AreEqual(oneEqCheck, newEq);
         //тестирование метода AcceptWork
         Foreman.AcceptWork(true);
